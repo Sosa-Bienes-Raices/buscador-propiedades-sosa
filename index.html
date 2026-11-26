@@ -248,7 +248,7 @@
       </button>
     </section>
 
-    <!-- PASO 3: RESULTADOS (SOLO COLONIA Y PRECIO + CHECKBOX PARA FOTOS) -->
+    <!-- PASO 3: RESULTADOS CON CARACTERÍSTICAS + CHECKBOX PARA FOTOS -->
     <section id="paso-3" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 space-y-5 fade-in">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <div>
@@ -264,7 +264,7 @@
         Marca la casilla de las propiedades de las que te gustaría recibir <b>fotos y detalles por WhatsApp</b> y presiona <b>Enviar selección</b>:
       </p>
 
-      <div id="lista-resultados" class="space-y-2.5 max-h-[440px] overflow-y-auto pr-1"></div>
+      <div id="lista-resultados" class="space-y-2.5 max-h-[460px] overflow-y-auto pr-1"></div>
 
       <div id="bloque-acciones-seleccion" class="pt-2 space-y-3">
         <button
@@ -479,21 +479,28 @@
       subtitulo.innerHTML = 'Marca la casilla de las propiedades de las que te gustaría recibir <b>fotos y detalles por WhatsApp</b> y presiona <b>Enviar selección</b>:';
       bloqueAcciones.classList.remove("hidden");
 
+      // Formato:
+      // Villa Residencial Bonita — $2,150,000
+      // 3 recámaras · 2 baños · 1 piso · 126 m² de construcción
       lista.innerHTML = opciones.map(op => {
         const badgeAlred = op.es_alrededor
-          ? `<span class="ml-2 text-[11px] font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">Alrededores</span>`
+          ? `<span class="ml-2 text-[11px] font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 align-middle">Alrededores</span>`
           : "";
+        const lineaDetalles = op.detalles
+          ? `<p class="text-xs sm:text-sm text-slate-600 mt-1">${op.detalles}</p>`
+          : "";
+
         return `
-          <label class="flex items-center justify-between gap-3 p-3.5 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/30 cursor-pointer transition">
-            <div class="flex items-center gap-3 min-w-0">
-              <input type="checkbox" name="prop_check" value="${op.id}" class="w-5 h-5 accent-emerald-700 rounded cursor-pointer shrink-0" />
-              <span class="font-semibold text-slate-900 text-sm sm:text-base truncate">
-                ${op.colonia}${badgeAlred}
-              </span>
+          <label class="flex items-start gap-3 p-3.5 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/30 cursor-pointer transition">
+            <input type="checkbox" name="prop_check" value="${op.id}" class="mt-1 w-5 h-5 accent-emerald-700 rounded cursor-pointer shrink-0" />
+            <div class="min-w-0 flex-1">
+              <div class="text-sm sm:text-base leading-snug">
+                <span class="font-bold text-slate-900">${op.colonia}</span>
+                <span class="text-slate-400 mx-1">&mdash;</span>
+                <span class="font-extrabold text-emerald-800">${op.precio}</span>${badgeAlred}
+              </div>
+              ${lineaDetalles}
             </div>
-            <span class="font-extrabold text-emerald-800 text-sm sm:text-base whitespace-nowrap">
-              ${op.precio}
-            </span>
           </label>
         `;
       }).join("");
