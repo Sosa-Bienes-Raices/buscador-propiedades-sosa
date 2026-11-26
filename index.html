@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buscador de Propiedades en Hermosillo | Sosa Bienes Raíces &amp; Next</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    .fade-in { animation: fadeIn 0.28s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+  <!-- ENCABEZADO CON LOGOS SOSA + NEXT -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-20">
+    <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <img src="logo-sosa.png" alt="Sosa Bienes Raíces" class="h-10 w-auto object-contain" onerror="this.style.display='none'" />
+        <div class="h-7 w-px bg-slate-200"></div>
+        <img src="logo-next.png" alt="Next Bienes Raíces" class="h-9 w-auto object-contain" onerror="this.style.display='none'" />
+      </div>
+      <span class="text-xs font-semibold uppercase tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full">
+        Hermosillo, Son.
+      </span>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-3xl w-full mx-auto px-4 py-6 space-y-6">
+
+    <!-- TARJETA PRESENTACIÓN ASESORES -->
+    <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 flex flex-col sm:flex-row items-center gap-4">
+      <img
+        src="asesores.jpg"
+        alt="Cristian Sosa y Claudia Castro - Asesores Inmobiliarios"
+        class="w-20 h-20 rounded-full object-cover border-2 border-emerald-600 shrink-0 shadow-sm"
+        onerror="this.src='https://ui-avatars.com/api/?name=Sosa+Next&background=065f46&color=fff&size=128'"
+      />
+      <div class="text-center sm:text-left">
+        <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 leading-tight">
+          Encuentra tu propiedad ideal en Hermosillo
+        </h1>
+        <p class="text-sm text-slate-600 mt-1">
+          Filtra dentro de nuestro inventario actualizado de <b>Sosa Bienes Raíces | Next</b> y selecciona las opciones de las que quieras recibir fotos y ficha completa.
+        </p>
+      </div>
+    </section>
+
+    <!-- PASO 1: FILTROS DE BÚSQUEDA -->
+    <section id="paso-1" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 space-y-5 fade-in">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Paso 1 de 2</span>
+          <h2 class="text-lg font-bold text-slate-900">¿Qué propiedad estás buscando?</h2>
+        </div>
+        <span id="contador-filtros" class="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">
+          0 / 4 criterios mín.
+        </span>
+      </div>
+
+      <p class="text-xs text-slate-500 bg-slate-50 border border-slate-200/80 rounded-xl p-3">
+        Completa al menos <b>4 datos</b> (incluyendo <b>Operación</b>, <b>Zona o Colonia</b> y tu <b>Rango de precio</b>) para mostrarte coincidencias exactas.
+      </p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- Operación -->
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-1">Operación *</label>
+          <select id="operacion" class="filtro-campo w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm bg-white focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 outline-none">
+            <option value="">Selecciona...</option>
+            <option value="Venta">Comprar (Venta)</option>
+            <option value="Renta">Rentar (Renta)</option>
+          </select>
+        </div>
+
+        <!-- Tipo de Inmueble -->
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-1">Tipo de inmueble</label>
+          <select id="tipo" class="filtro-campo w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm bg-white focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 outline-none">
+            <option value="">Cualquiera</option>
+            <option value="casa">Casa</option>
+            <option value="departamento">Departamento</option>
+            <option value="terreno">Terreno</option>
+            <option value="local">Local comercial</option>
+            <option value="bodega">Bodega</option>
+            <option value="oficina">Oficina</option>
+          </select>
+        </div>
+
+        <!-- Zona -->
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-1">Zona de Hermosillo</label>
+          <select id="zona" class="filtro-campo w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm bg-white focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 outline-none">
+            <option value="">Cualquier zona</option>
+            <option value="poniente">Poniente</option>
+            <option value="norte">Norte</option>
+            <option value="centro">Centro</option>
+            <option value="oriente">Oriente</option>
+            <option value="sur">Sur</option>
+            <option value="fuera de Hermosillo">Fuera de Hermosillo / Campestre</option>
+          </select>
+        </div>
+
+        <!-- Colonia(s) -->
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-1">Colonia o Fraccionamiento(s)</label>
+          <input
+            type="text"
+            id="colonia"
+            list="lista-colonias"
+            placeholder="Ej. Villa Bonita, Puerta Real..."
+            class="filtro-campo w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 outline-none"
+          />
+          <datalist id="lista-colonias"></datalist>
+        </div>
+      </div>
+
+      <!-- Switch Incluir Alrededores (~1 km) -->
+      <div class="bg-emerald-50/70 border border-emerald-200 rounded-xl p-3.5 flex items-center justify-between gap-3">
+        <div>
+          <p class="text-sm font-semibold text-emerald-950">Incluir colonias alrededor (~1 km)</p>
+          <p class="text-xs text-emerald-800">Amplía tu búsqueda a fraccionamientos vecinos cercanos a la colonia que escribiste.</p>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer shrink-0">
+          <input type="checkbox" id="incluir_alrededores" class="sr-only peer" />
+          <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+        </label>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- Precio Mínimo -->
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-1">Presupuesto mínimo (MXN) *</label>
+          <input
+            type="number"
+            id="precio_min"
+            min="0"
+            step="1000"
+            placeholder="Ej. 1200000"
+            class="filtro-campo w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 outline-none"
+          />
+        </div>
+
+        <!-- Precio Máximo -->
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-1">Presupuesto máximo (MXN) *</label>
+          <input
+            type="number"
+            id="precio_max"
+            min="0"
+            step="1000"
+            placeholder="Ej. 2500000"
+            class="filtro-campo w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 outline-none"
+          />
+        </div>
+
+        <!-- Recámaras -->
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-1">Recámaras</label>
+          <select id="recamaras" class="filtro-campo w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm bg-white focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 outline-none">
+            <option value="">Indistinto</option>
+            <option value="1">1 recámara</option>
+            <option value="2">2 recámaras</option>
+            <option value="3">3 recámaras</option>
+            <option value="4">4 o más recámaras</option>
+          </select>
+        </div>
+
+        <!-- Pisos -->
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-1">Plantas / Pisos</label>
+          <select id="pisos" class="filtro-campo w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm bg-white focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 outline-none">
+            <option value="">Indistinto</option>
+            <option value="1">1 planta</option>
+            <option value="2">2 plantas</option>
+            <option value="3">3 o más plantas</option>
+          </select>
+        </div>
+      </div>
+
+      <p id="error-paso-1" class="hidden text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl p-3 font-medium"></p>
+
+      <button
+        type="button"
+        onclick="irAPaso2()"
+        class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-3.5 px-5 rounded-xl shadow-sm transition text-sm sm:text-base"
+      >
+        Continuar para ver opciones disponibles →
+      </button>
+    </section>
+
+    <!-- PASO 2: DATOS DE CONTACTO -->
+    <section id="paso-2" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 space-y-5 fade-in">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Paso 2 de 2</span>
+          <h2 class="text-lg font-bold text-slate-900">¿A quién le enviamos las opciones?</h2>
+        </div>
+        <button type="button" onclick="volverAPaso1()" class="text-xs font-semibold text-slate-500 hover:text-slate-800 underline">
+          ← Editar filtros
+        </button>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-1">Tu nombre completo *</label>
+          <input
+            type="text"
+            id="nombre"
+            placeholder="Ej. Carlos Mendoza"
+            class="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 outline-none"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-1">WhatsApp (10 dígitos) *</label>
+          <input
+            type="tel"
+            id="whatsapp"
+            maxlength="10"
+            placeholder="Ej. 6621234567"
+            class="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 outline-none"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-1">¿En cuánto tiempo planeas comprar o rentar? *</label>
+          <select id="plazo" class="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm bg-white focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 outline-none">
+            <option value="">Selecciona un plazo...</option>
+            <option value="Inmediato / Menos de 1 mes">Inmediato / Menos de 1 mes</option>
+            <option value="1 a 3 meses">De 1 a 3 meses</option>
+            <option value="3 a 6 meses">De 3 a 6 meses</option>
+            <option value="Solo explorando opciones">Solo estoy explorando opciones</option>
+          </select>
+        </div>
+      </div>
+
+      <p id="error-paso-2" class="hidden text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl p-3 font-medium"></p>
+
+      <button
+        type="button"
+        id="btn-buscar"
+        onclick="buscarPropiedades()"
+        class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-3.5 px-5 rounded-xl shadow-sm transition text-sm sm:text-base"
+      >
+        Buscar propiedades en inventario
+      </button>
+    </section>
+
+    <!-- PASO 3: RESULTADOS (SOLO COLONIA Y PRECIO + CHECKBOX PARA FOTOS) -->
+    <section id="paso-3" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 space-y-5 fade-in">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Resultados encontrados</span>
+          <h2 id="titulo-resultados" class="text-lg font-bold text-slate-900">Opciones disponibles</h2>
+        </div>
+        <button type="button" onclick="volverAPaso1()" class="text-xs font-semibold text-slate-500 hover:text-slate-800 underline">
+          Nueva búsqueda
+        </button>
+      </div>
+
+      <p id="subtitulo-resultados" class="text-sm text-slate-600">
+        Marca la casilla de las propiedades de las que te gustaría recibir <b>fotos y detalles por WhatsApp</b> y presiona <b>Enviar selección</b>:
+      </p>
+
+      <div id="lista-resultados" class="space-y-2.5 max-h-[440px] overflow-y-auto pr-1"></div>
+
+      <div id="bloque-acciones-seleccion" class="pt-2 space-y-3">
+        <button
+          type="button"
+          id="btn-enviar-seleccion"
+          onclick="enviarSeleccion()"
+          class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 px-5 rounded-xl shadow-sm transition text-sm sm:text-base"
+        >
+          Enviar selección para recibir fotos
+        </button>
+      </div>
+
+      <div id="mensaje-confirmacion" class="hidden rounded-xl p-4 text-sm space-y-1"></div>
+    </section>
+
+  </main>
+
+  <footer class="text-center text-xs text-slate-400 py-5 px-4">
+    Sosa Bienes Raíces &bull; Red Inmobiliaria Next Hermosillo
+  </footer>
+
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxQtEfZOApx-BzW0A4REhFf4QgLI9PmkM7QQiHgPF0IziggGxAS5ZCxSub61Xra6sWyGQ/exec";
+
+    let leadIdActual = "";
+    let payloadBusquedaActual = null;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const origenCampana = urlParams.get("origen") || urlParams.get("utm_campaign") || urlParams.get("utm_source") || "Directo / Organico";
+
+    window.addEventListener("DOMContentLoaded", () => {
+      actualizarContadorFiltros();
+      document.querySelectorAll(".filtro-campo").forEach(el => {
+        el.addEventListener("input", actualizarContadorFiltros);
+        el.addEventListener("change", actualizarContadorFiltros);
+      });
+
+      fetch(`${SCRIPT_URL}?action=colonias`)
+        .then(r => r.json())
+        .then(data => {
+          if (data && Array.isArray(data.colonias)) {
+            const dl = document.getElementById("lista-colonias");
+            dl.innerHTML = data.colonias.map(c => `<option value="${c}"></option>`).join("");
+          }
+        })
+        .catch(() => {});
+    });
+
+    function contarCamposLlenos() {
+      const campos = ["operacion", "tipo", "zona", "colonia", "precio_min", "precio_max", "recamaras", "pisos"];
+      let count = 0;
+      campos.forEach(id => {
+        const val = String(document.getElementById(id).value || "").trim();
+        if (val !== "") count++;
+      });
+      return count;
+    }
+
+    function actualizarContadorFiltros() {
+      const n = contarCamposLlenos();
+      const badge = document.getElementById("contador-filtros");
+      badge.textContent = `${n} / 4 criterios mín.`;
+      if (n >= 4) {
+        badge.className = "text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800";
+      } else {
+        badge.className = "text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600";
+      }
+    }
+
+    function irAPaso2() {
+      const err = document.getElementById("error-paso-1");
+      err.classList.add("hidden");
+
+      const operacion = document.getElementById("operacion").value.trim();
+      const zona = document.getElementById("zona").value.trim();
+      const colonia = document.getElementById("colonia").value.trim();
+      const pMin = document.getElementById("precio_min").value.trim();
+      const pMax = document.getElementById("precio_max").value.trim();
+      const totalLlenos = contarCamposLlenos();
+
+      if (!operacion) {
+        err.textContent = "Por favor selecciona si buscas Comprar (Venta) o Rentar (Renta).";
+        err.classList.remove("hidden");
+        return;
+      }
+      if (!zona && !colonia) {
+        err.textContent = "Indica al menos una Zona o una Colonia/Fraccionamiento donde buscas.";
+        err.classList.remove("hidden");
+        return;
+      }
+      if (!pMin && !pMax) {
+        err.textContent = "Indica al menos un presupuesto mínimo o máximo para filtrar opciones.";
+        err.classList.remove("hidden");
+        return;
+      }
+      if (pMin && pMax && Number(pMin) > Number(pMax)) {
+        err.textContent = "El presupuesto mínimo no puede ser mayor que el presupuesto máximo.";
+        err.classList.remove("hidden");
+        return;
+      }
+      if (totalLlenos < 4) {
+        err.textContent = `Has llenado ${totalLlenos} datos. Completa al menos 4 criterios (por ejemplo: Operación, Zona/Colonia, Precio mínimo y Precio máximo) para afinar tu búsqueda.`;
+        err.classList.remove("hidden");
+        return;
+      }
+
+      document.getElementById("paso-1").classList.add("hidden");
+      document.getElementById("paso-2").classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function volverAPaso1() {
+      document.getElementById("paso-2").classList.add("hidden");
+      document.getElementById("paso-3").classList.add("hidden");
+      document.getElementById("paso-1").classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    async function buscarPropiedades() {
+      const err = document.getElementById("error-paso-2");
+      err.classList.add("hidden");
+
+      const nombre = document.getElementById("nombre").value.trim();
+      const whatsapp = document.getElementById("whatsapp").value.replace(/\D/g, "");
+      const plazo = document.getElementById("plazo").value.trim();
+
+      if (nombre.length < 3) {
+        err.textContent = "Por favor escribe tu nombre completo.";
+        err.classList.remove("hidden");
+        return;
+      }
+      if (whatsapp.length !== 10) {
+        err.textContent = "Ingresa un número de WhatsApp válido a 10 dígitos.";
+        err.classList.remove("hidden");
+        return;
+      }
+      if (!plazo) {
+        err.textContent = "Selecciona en cuánto tiempo planeas comprar o rentar.";
+        err.classList.remove("hidden");
+        return;
+      }
+
+      const btn = document.getElementById("btn-buscar");
+      btn.disabled = true;
+      btn.textContent = "Buscando en inventario...";
+
+      payloadBusquedaActual = {
+        action: "buscar",
+        nombre,
+        whatsapp,
+        plazo,
+        operacion: document.getElementById("operacion").value.trim(),
+        tipo: document.getElementById("tipo").value.trim(),
+        zona: document.getElementById("zona").value.trim(),
+        colonia: document.getElementById("colonia").value.trim(),
+        incluir_alrededores: document.getElementById("incluir_alrededores").checked,
+        precio_min: document.getElementById("precio_min").value.trim(),
+        precio_max: document.getElementById("precio_max").value.trim(),
+        recamaras: document.getElementById("recamaras").value.trim(),
+        pisos: document.getElementById("pisos").value.trim(),
+        origen: origenCampana
+      };
+
+      try {
+        const res = await fetch(SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify(payloadBusquedaActual)
+        });
+        const data = await res.json();
+
+        if (data.status !== "success") {
+          throw new Error(data.message || "Error al consultar el inventario.");
+        }
+
+        leadIdActual = data.lead_id || "";
+        pintarResultados(data.opciones || []);
+
+        document.getElementById("paso-2").classList.add("hidden");
+        document.getElementById("paso-3").classList.remove("hidden");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } catch (e) {
+        err.textContent = "No se pudo conectar con el buscador: " + e.message;
+        err.classList.remove("hidden");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Buscar propiedades en inventario";
+      }
+    }
+
+    function pintarResultados(opciones) {
+      const lista = document.getElementById("lista-resultados");
+      const titulo = document.getElementById("titulo-resultados");
+      const subtitulo = document.getElementById("subtitulo-resultados");
+      const bloqueAcciones = document.getElementById("bloque-acciones-seleccion");
+      const msgConf = document.getElementById("mensaje-confirmacion");
+
+      msgConf.classList.add("hidden");
+
+      if (!opciones || opciones.length === 0) {
+        titulo.textContent = "Sin coincidencias exactas en este momento";
+        subtitulo.innerHTML = "No encontramos propiedades con esos filtros exactos en pantalla, pero <b>Cristian Sosa ya recibió tu búsqueda</b> para enviarte opciones de nuestra red inmobiliaria por WhatsApp.";
+        lista.innerHTML = `
+          <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-900">
+            También puedes presionar <b>Nueva búsqueda</b> y activar <b>Incluir colonias alrededor (~1 km)</b> o ampliar ligeramente tu rango de presupuesto.
+          </div>
+        `;
+        bloqueAcciones.classList.add("hidden");
+        return;
+      }
+
+      titulo.textContent = `${opciones.length} ${opciones.length === 1 ? "propiedad disponible" : "propiedades disponibles"}`;
+      subtitulo.innerHTML = 'Marca la casilla de las propiedades de las que te gustaría recibir <b>fotos y detalles por WhatsApp</b> y presiona <b>Enviar selección</b>:';
+      bloqueAcciones.classList.remove("hidden");
+
+      lista.innerHTML = opciones.map(op => {
+        const badgeAlred = op.es_alrededor
+          ? `<span class="ml-2 text-[11px] font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">Alrededores</span>`
+          : "";
+        return `
+          <label class="flex items-center justify-between gap-3 p-3.5 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/30 cursor-pointer transition">
+            <div class="flex items-center gap-3 min-w-0">
+              <input type="checkbox" name="prop_check" value="${op.id}" class="w-5 h-5 accent-emerald-700 rounded cursor-pointer shrink-0" />
+              <span class="font-semibold text-slate-900 text-sm sm:text-base truncate">
+                ${op.colonia}${badgeAlred}
+              </span>
+            </div>
+            <span class="font-extrabold text-emerald-800 text-sm sm:text-base whitespace-nowrap">
+              ${op.precio}
+            </span>
+          </label>
+        `;
+      }).join("");
+    }
+
+    async function enviarSeleccion() {
+      const checks = Array.from(document.querySelectorAll('input[name="prop_check"]:checked'));
+      const seleccionadas = checks.map(c => c.value);
+
+      const btn = document.getElementById("btn-enviar-seleccion");
+      btn.disabled = true;
+      btn.textContent = "Enviando...";
+
+      try {
+        const res = await fetch(SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "seleccionar",
+            lead_id: leadIdActual,
+            seleccionadas,
+            nombre: payloadBusquedaActual ? payloadBusquedaActual.nombre : "",
+            whatsapp: payloadBusquedaActual ? payloadBusquedaActual.whatsapp : "",
+            plazo: payloadBusquedaActual ? payloadBusquedaActual.plazo : "",
+            operacion: payloadBusquedaActual ? payloadBusquedaActual.operacion : "",
+            zona: payloadBusquedaActual ? payloadBusquedaActual.zona : "",
+            colonia: payloadBusquedaActual ? payloadBusquedaActual.colonia : ""
+          })
+        });
+        const data = await res.json();
+
+        const msgConf = document.getElementById("mensaje-confirmacion");
+        msgConf.classList.remove("hidden");
+
+        if (seleccionadas.length === 0) {
+          msgConf.className = "rounded-xl p-4 text-sm bg-amber-50 border border-amber-200 text-amber-900";
+          msgConf.innerHTML = `<b>Solicitud recibida.</b> No marcaste ninguna propiedad específica, pero tu búsqueda quedó registrada y un asesor te contactará por WhatsApp con opciones acordes a lo que buscas.`;
+        } else {
+          msgConf.className = "rounded-xl p-4 text-sm bg-emerald-50 border border-emerald-200 text-emerald-900";
+          msgConf.innerHTML = `<b>¡Listo!</b> Recibimos las <b>${seleccionadas.length} ${seleccionadas.length === 1 ? "propiedad" : "propiedades"}</b> que seleccionaste. En breve te enviaremos las fotos y fichas técnicas a tu WhatsApp.`;
+          document.getElementById("bloque-acciones-seleccion").classList.add("hidden");
+        }
+      } catch (e) {
+        alert("Hubo un problema al enviar tu selección: " + e.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Enviar selección para recibir fotos";
+      }
+    }
+  </script>
+</body>
+</html>
