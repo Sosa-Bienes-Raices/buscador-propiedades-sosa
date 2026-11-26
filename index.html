@@ -7,7 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    .fade-in { animation: fadeIn 0.28s ease-out; }
+    .fade-in { animation: fadeIn 0.25s ease-out; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
@@ -104,22 +104,52 @@
           </select>
         </div>
 
-        <!-- Colonia(s) + Switch Alrededores solo visible cuando hay colonia -->
-        <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-1">Colonia o Fraccionamiento(s) *</label>
-          <input
-            type="text"
-            id="colonia"
-            list="lista-colonias"
-            placeholder="Ej. Villa Bonita, Puerta Real..."
-            class="filtro-campo w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 outline-none"
-          />
-          <datalist id="lista-colonias"></datalist>
+        <!-- Buscador / Seleccionador Desplegable de Colonias -->
+        <div class="relative" id="contenedor-colonia">
+          <label class="block text-sm font-semibold text-slate-700 mb-1">Colonia o Fraccionamiento *</label>
+          <div class="relative">
+            <input
+              type="text"
+              id="colonia"
+              autocomplete="off"
+              placeholder="Escribe o selecciona colonia..."
+              class="filtro-campo w-full rounded-xl border border-slate-300 pl-3.5 pr-16 py-2.5 text-sm bg-white focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 outline-none"
+            />
+            <!-- Botón limpiar (X) -->
+            <button
+              type="button"
+              id="btn-limpiar-colonia"
+              onclick="limpiarColonia()"
+              title="Borrar colonia"
+              class="hidden absolute right-8 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1 text-xs font-bold"
+            >
+              ✕
+            </button>
+            <!-- Botón flechita desplegable -->
+            <button
+              type="button"
+              id="btn-toggle-colonias"
+              onclick="toggleDropdownColonias()"
+              title="Ver lista de colonias"
+              class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 hover:text-emerald-700 p-1.5 rounded-lg transition"
+            >
+              <svg id="icono-flecha-colonia" class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+          </div>
 
+          <!-- Lista desplegable filtrable -->
+          <div
+            id="dropdown-colonias"
+            class="hidden absolute left-0 right-0 mt-1 bg-white border border-slate-300 rounded-xl shadow-lg max-h-60 overflow-y-auto z-30 divide-y divide-slate-100"
+          ></div>
+
+          <!-- Switch Alrededores solo visible cuando se elige una colonia válida -->
           <div id="bloque-alrededores" class="hidden mt-2.5 bg-emerald-50/70 border border-emerald-200 rounded-xl p-3 flex items-center justify-between gap-3 fade-in">
             <div>
               <p class="text-xs sm:text-sm font-semibold text-emerald-950">Incluir colonias alrededor (~1 km)</p>
-              <p class="text-[11px] sm:text-xs text-emerald-800">Muestra también fraccionamientos cercanos a la colonia indicada.</p>
+              <p class="text-[11px] sm:text-xs text-emerald-800">Muestra también fraccionamientos cercanos a la colonia seleccionada.</p>
             </div>
             <label class="relative inline-flex items-center cursor-pointer shrink-0">
               <input type="checkbox" id="incluir_alrededores" class="sr-only peer" />
@@ -290,9 +320,19 @@
 
     let leadIdActual = "";
     let payloadBusquedaActual = null;
+    let catalogoColonias = [];
+    let coloniasCargadas = false;
 
     const urlParams = new URLSearchParams(window.location.search);
     const origenCampana = urlParams.get("origen") || urlParams.get("utm_campaign") || urlParams.get("utm_source") || "Directo / Organico";
+
+    function normalizarBuscador(txt) {
+      return String(txt || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .trim();
+    }
 
     function formatearMilesInput(input) {
       const soloDigitos = String(input.value || "").replace(/\D/g, "");
@@ -307,17 +347,125 @@
       return String(document.getElementById(id).value || "").replace(/\D/g, "");
     }
 
-    function actualizarVisibilidadAlrededores() {
-      const tieneColonia = document.getElementById("colonia").value.trim() !== "";
+    // ==========================================
+    // BUSCADOR / DESPLEGABLE DE COLONIAS
+    // ==========================================
+    function obtenerColoniaValida() {
+      const texto = document.getElementById("colonia").value.trim();
+      if (!texto) return "";
+      if (!coloniasCargadas || catalogoColonias.length === 0) return texto;
+      const norm = normalizarBuscador(texto);
+      const exacta = catalogoColonias.find(c => normalizarBuscador(c) === norm);
+      return exacta || "";
+    }
+
+    function actualizarEstadoUIAlrededores() {
+      const texto = document.getElementById("colonia").value.trim();
+      const btnLimpiar = document.getElementById("btn-limpiar-colonia");
       const bloque = document.getElementById("bloque-alrededores");
       const check = document.getElementById("incluir_alrededores");
 
-      if (tieneColonia) {
+      if (texto !== "") {
+        btnLimpiar.classList.remove("hidden");
+      } else {
+        btnLimpiar.classList.add("hidden");
+      }
+
+      const colValida = obtenerColoniaValida();
+      if (colValida !== "") {
         bloque.classList.remove("hidden");
       } else {
         bloque.classList.add("hidden");
         check.checked = false;
       }
+    }
+
+    function abrirDropdownColonias(filtroTexto = "") {
+      const dropdown = document.getElementById("dropdown-colonias");
+      const flecha = document.getElementById("icono-flecha-colonia");
+
+      if (!coloniasCargadas) {
+        dropdown.innerHTML = `<div class="px-3.5 py-3 text-xs text-slate-500">Cargando colonias del inventario...</div>`;
+        dropdown.classList.remove("hidden");
+        flecha.classList.add("rotate-180");
+        return;
+      }
+
+      const q = normalizarBuscador(filtroTexto);
+      let filtradas = catalogoColonias;
+
+      if (q) {
+        const empiezan = [];
+        const contienen = [];
+        catalogoColonias.forEach(c => {
+          const cn = normalizarBuscador(c);
+          if (cn.startsWith(q)) {
+            empiezan.push(c);
+          } else if (cn.includes(q)) {
+            contienen.push(c);
+          }
+        });
+        filtradas = [...empiezan, ...contienen];
+      }
+
+      if (filtradas.length === 0) {
+        dropdown.innerHTML = `
+          <div class="px-3.5 py-3 text-xs text-slate-600 bg-slate-50">
+            No tenemos propiedades registradas en esa colonia por ahora. Puedes borrar el texto y seleccionar una <b>Zona de Hermosillo</b>.
+          </div>
+        `;
+      } else {
+        dropdown.innerHTML = filtradas.map(col => {
+          const colSafe = col.replace(/"/g, "&quot;");
+          return `
+            <button
+              type="button"
+              onmousedown="seleccionarColonia('${colSafe}')"
+              class="w-full text-left px-3.5 py-2.5 text-sm text-slate-800 hover:bg-emerald-50 hover:text-emerald-900 transition flex items-center justify-between"
+            >
+              <span>${col}</span>
+            </button>
+          `;
+        }).join("");
+      }
+
+      dropdown.classList.remove("hidden");
+      flecha.classList.add("rotate-180");
+    }
+
+    function cerrarDropdownColonias() {
+      const dropdown = document.getElementById("dropdown-colonias");
+      const flecha = document.getElementById("icono-flecha-colonia");
+      dropdown.classList.add("hidden");
+      flecha.classList.remove("rotate-180");
+    }
+
+    function toggleDropdownColonias() {
+      const dropdown = document.getElementById("dropdown-colonias");
+      if (dropdown.classList.contains("hidden")) {
+        const input = document.getElementById("colonia");
+        input.focus();
+        abrirDropdownColonias(input.value);
+      } else {
+        cerrarDropdownColonias();
+      }
+    }
+
+    function seleccionarColonia(nombreColonia) {
+      const input = document.getElementById("colonia");
+      input.value = nombreColonia;
+      cerrarDropdownColonias();
+      actualizarEstadoUIAlrededores();
+      actualizarContadorFiltros();
+    }
+
+    function limpiarColonia() {
+      const input = document.getElementById("colonia");
+      input.value = "";
+      cerrarDropdownColonias();
+      actualizarEstadoUIAlrededores();
+      actualizarContadorFiltros();
+      input.focus();
     }
 
     window.addEventListener("DOMContentLoaded", () => {
@@ -326,10 +474,21 @@
       });
 
       const inputColonia = document.getElementById("colonia");
-      inputColonia.addEventListener("input", actualizarVisibilidadAlrededores);
-      inputColonia.addEventListener("change", actualizarVisibilidadAlrededores);
+      inputColonia.addEventListener("focus", () => abrirDropdownColonias(inputColonia.value));
+      inputColonia.addEventListener("input", () => {
+        abrirDropdownColonias(inputColonia.value);
+        actualizarEstadoUIAlrededores();
+      });
 
-      actualizarVisibilidadAlrededores();
+      // Cerrar desplegable al tocar fuera
+      document.addEventListener("click", (e) => {
+        const contenedor = document.getElementById("contenedor-colonia");
+        if (contenedor && !contenedor.contains(e.target)) {
+          cerrarDropdownColonias();
+        }
+      });
+
+      actualizarEstadoUIAlrededores();
       actualizarContadorFiltros();
 
       document.querySelectorAll(".filtro-campo").forEach(el => {
@@ -341,23 +500,27 @@
         .then(r => r.json())
         .then(data => {
           if (data && Array.isArray(data.colonias)) {
-            const dl = document.getElementById("lista-colonias");
-            dl.innerHTML = data.colonias.map(c => `<option value="${c}"></option>`).join("");
+            catalogoColonias = data.colonias;
+            coloniasCargadas = true;
+            actualizarEstadoUIAlrededores();
+            actualizarContadorFiltros();
           }
         })
-        .catch(() => {});
+        .catch(() => {
+          coloniasCargadas = true;
+        });
     });
 
     function contarCriteriosObligatorios() {
       let count = 0;
       const operacion = document.getElementById("operacion").value.trim();
       const zona = document.getElementById("zona").value.trim();
-      const colonia = document.getElementById("colonia").value.trim();
+      const colValida = obtenerColoniaValida();
       const pMin = obtenerNumeroLimpio("precio_min");
       const pMax = obtenerNumeroLimpio("precio_max");
 
       if (operacion !== "") count++;
-      if (zona !== "" || colonia !== "") count++;
+      if (zona !== "" || colValida !== "") count++;
       if (pMin !== "" || pMax !== "") count++;
 
       return count;
@@ -380,7 +543,8 @@
 
       const operacion = document.getElementById("operacion").value.trim();
       const zona = document.getElementById("zona").value.trim();
-      const colonia = document.getElementById("colonia").value.trim();
+      const textoColonia = document.getElementById("colonia").value.trim();
+      const colValida = obtenerColoniaValida();
       const pMin = obtenerNumeroLimpio("precio_min");
       const pMax = obtenerNumeroLimpio("precio_max");
 
@@ -389,8 +553,13 @@
         err.classList.remove("hidden");
         return;
       }
-      if (!zona && !colonia) {
-        err.textContent = "Indica al menos una Zona o una Colonia/Fraccionamiento donde buscas.";
+      if (textoColonia !== "" && colValida === "") {
+        err.textContent = "Selecciona una colonia de la lista desplegable, o borra el campo y elige una Zona de Hermosillo.";
+        err.classList.remove("hidden");
+        return;
+      }
+      if (!zona && !colValida) {
+        err.textContent = "Indica al menos una Zona o selecciona una Colonia/Fraccionamiento donde buscas.";
         err.classList.remove("hidden");
         return;
       }
@@ -445,7 +614,7 @@
       btn.disabled = true;
       btn.textContent = "Buscando en inventario...";
 
-      const coloniaVal = document.getElementById("colonia").value.trim();
+      const coloniaVal = obtenerColoniaValida();
       const incluirAlrededoresVal = coloniaVal !== "" && document.getElementById("incluir_alrededores").checked;
 
       payloadBusquedaActual = {
