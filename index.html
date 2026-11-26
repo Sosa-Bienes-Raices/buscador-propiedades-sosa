@@ -13,17 +13,19 @@
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
 
-  <!-- ENCABEZADO CON LOGOS SOSA + NEXT -->
+  <!-- ENCABEZADO CON LOGOS SOSA + NEXT SIN TAPARSE EN MÓVIL -->
   <header class="bg-white border-b border-slate-200 sticky top-0 z-20">
-    <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
-      <div class="flex items-center gap-3">
-        <img src="logo-sosa.png" alt="Sosa Bienes Raíces" class="h-10 w-auto object-contain" onerror="this.style.display='none'" />
-        <div class="h-7 w-px bg-slate-200"></div>
-        <img src="logo-next.png" alt="Next Bienes Raíces" class="h-9 w-auto object-contain" onerror="this.style.display='none'" />
+    <div class="max-w-3xl mx-auto px-4 py-2.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5">
+      <div class="flex items-center justify-between sm:justify-start gap-3">
+        <img src="logo-sosa.png" alt="Sosa Bienes Raíces" class="h-9 sm:h-10 w-auto max-w-[44%] object-contain shrink-0" onerror="this.style.display='none'" />
+        <div class="h-7 w-px bg-slate-200 shrink-0"></div>
+        <img src="logo-next.png" alt="Next Bienes Raíces" class="h-8 sm:h-9 w-auto max-w-[44%] object-contain shrink-0" onerror="this.style.display='none'" />
       </div>
-      <span class="text-xs font-semibold uppercase tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full">
-        Hermosillo, Son.
-      </span>
+      <div class="flex justify-end">
+        <span class="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full whitespace-nowrap">
+          Hermosillo, Son.
+        </span>
+      </div>
     </div>
   </header>
 
@@ -54,13 +56,13 @@
           <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Paso 1 de 2</span>
           <h2 class="text-lg font-bold text-slate-900">¿Qué propiedad estás buscando?</h2>
         </div>
-        <span id="contador-filtros" class="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">
-          0 / 4 criterios mín.
+        <span id="contador-filtros" class="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 whitespace-nowrap">
+          0 / 3 obligatorios
         </span>
       </div>
 
       <p class="text-xs text-slate-500 bg-slate-50 border border-slate-200/80 rounded-xl p-3">
-        Completa al menos <b>4 datos</b> (incluyendo <b>Operación</b>, <b>Zona o Colonia</b> y tu <b>Rango de precio</b>) para mostrarte coincidencias exactas.
+        Solo se ocupan <b>3 datos obligatorios</b> para mostrarte coincidencias: <b>Operación</b>, <b>Colonia o Zona</b> y tu <b>Rango de precio</b>. Los demás filtros son opcionales.
       </p>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -76,7 +78,7 @@
 
         <!-- Tipo de Inmueble -->
         <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-1">Tipo de inmueble</label>
+          <label class="block text-sm font-semibold text-slate-700 mb-1">Tipo de inmueble (opcional)</label>
           <select id="tipo" class="filtro-campo w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm bg-white focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 outline-none">
             <option value="">Cualquiera</option>
             <option value="casa">Casa</option>
@@ -90,7 +92,7 @@
 
         <!-- Zona -->
         <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-1">Zona de Hermosillo</label>
+          <label class="block text-sm font-semibold text-slate-700 mb-1">Zona de Hermosillo *</label>
           <select id="zona" class="filtro-campo w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm bg-white focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 outline-none">
             <option value="">Cualquier zona</option>
             <option value="poniente">Poniente</option>
@@ -104,7 +106,7 @@
 
         <!-- Colonia(s) -->
         <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-1">Colonia o Fraccionamiento(s)</label>
+          <label class="block text-sm font-semibold text-slate-700 mb-1">Colonia o Fraccionamiento(s) *</label>
           <input
             type="text"
             id="colonia"
@@ -129,35 +131,33 @@
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <!-- Precio Mínimo -->
+        <!-- Precio Mínimo con comas automáticas -->
         <div>
           <label class="block text-sm font-semibold text-slate-700 mb-1">Presupuesto mínimo (MXN) *</label>
           <input
-            type="number"
+            type="text"
+            inputmode="numeric"
             id="precio_min"
-            min="0"
-            step="1000"
-            placeholder="Ej. 1200000"
-            class="filtro-campo w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 outline-none"
+            placeholder="Ej. 1,200,000"
+            class="filtro-campo campo-moneda w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 outline-none"
           />
         </div>
 
-        <!-- Precio Máximo -->
+        <!-- Precio Máximo con comas automáticas -->
         <div>
           <label class="block text-sm font-semibold text-slate-700 mb-1">Presupuesto máximo (MXN) *</label>
           <input
-            type="number"
+            type="text"
+            inputmode="numeric"
             id="precio_max"
-            min="0"
-            step="1000"
-            placeholder="Ej. 2500000"
-            class="filtro-campo w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 outline-none"
+            placeholder="Ej. 2,500,000"
+            class="filtro-campo campo-moneda w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 outline-none"
           />
         </div>
 
         <!-- Recámaras -->
         <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-1">Recámaras</label>
+          <label class="block text-sm font-semibold text-slate-700 mb-1">Recámaras (opcional)</label>
           <select id="recamaras" class="filtro-campo w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm bg-white focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 outline-none">
             <option value="">Indistinto</option>
             <option value="1">1 recámara</option>
@@ -169,7 +169,7 @@
 
         <!-- Pisos -->
         <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-1">Plantas / Pisos</label>
+          <label class="block text-sm font-semibold text-slate-700 mb-1">Plantas / Pisos (opcional)</label>
           <select id="pisos" class="filtro-campo w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm bg-white focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 outline-none">
             <option value="">Indistinto</option>
             <option value="1">1 planta</option>
@@ -248,7 +248,7 @@
       </button>
     </section>
 
-    <!-- PASO 3: RESULTADOS CON CARACTERÍSTICAS + CHECKBOX PARA FOTOS -->
+    <!-- PASO 3: RESULTADOS EN 3 RENGLONES + CHECKBOX PARA FOTOS -->
     <section id="paso-3" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 space-y-5 fade-in">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <div>
@@ -295,7 +295,24 @@
     const urlParams = new URLSearchParams(window.location.search);
     const origenCampana = urlParams.get("origen") || urlParams.get("utm_campaign") || urlParams.get("utm_source") || "Directo / Organico";
 
+    function formatearMilesInput(input) {
+      const soloDigitos = String(input.value || "").replace(/\D/g, "");
+      if (!soloDigitos) {
+        input.value = "";
+        return;
+      }
+      input.value = Number(soloDigitos).toLocaleString("en-US");
+    }
+
+    function obtenerNumeroLimpio(id) {
+      return String(document.getElementById(id).value || "").replace(/\D/g, "");
+    }
+
     window.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".campo-moneda").forEach(inp => {
+        inp.addEventListener("input", () => formatearMilesInput(inp));
+      });
+
       actualizarContadorFiltros();
       document.querySelectorAll(".filtro-campo").forEach(el => {
         el.addEventListener("input", actualizarContadorFiltros);
@@ -313,24 +330,29 @@
         .catch(() => {});
     });
 
-    function contarCamposLlenos() {
-      const campos = ["operacion", "tipo", "zona", "colonia", "precio_min", "precio_max", "recamaras", "pisos"];
+    function contarCriteriosObligatorios() {
       let count = 0;
-      campos.forEach(id => {
-        const val = String(document.getElementById(id).value || "").trim();
-        if (val !== "") count++;
-      });
+      const operacion = document.getElementById("operacion").value.trim();
+      const zona = document.getElementById("zona").value.trim();
+      const colonia = document.getElementById("colonia").value.trim();
+      const pMin = obtenerNumeroLimpio("precio_min");
+      const pMax = obtenerNumeroLimpio("precio_max");
+
+      if (operacion !== "") count++;
+      if (zona !== "" || colonia !== "") count++;
+      if (pMin !== "" || pMax !== "") count++;
+
       return count;
     }
 
     function actualizarContadorFiltros() {
-      const n = contarCamposLlenos();
+      const n = contarCriteriosObligatorios();
       const badge = document.getElementById("contador-filtros");
-      badge.textContent = `${n} / 4 criterios mín.`;
-      if (n >= 4) {
-        badge.className = "text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800";
+      badge.textContent = `${n} / 3 obligatorios`;
+      if (n >= 3) {
+        badge.className = "text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 whitespace-nowrap";
       } else {
-        badge.className = "text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600";
+        badge.className = "text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 whitespace-nowrap";
       }
     }
 
@@ -341,9 +363,8 @@
       const operacion = document.getElementById("operacion").value.trim();
       const zona = document.getElementById("zona").value.trim();
       const colonia = document.getElementById("colonia").value.trim();
-      const pMin = document.getElementById("precio_min").value.trim();
-      const pMax = document.getElementById("precio_max").value.trim();
-      const totalLlenos = contarCamposLlenos();
+      const pMin = obtenerNumeroLimpio("precio_min");
+      const pMax = obtenerNumeroLimpio("precio_max");
 
       if (!operacion) {
         err.textContent = "Por favor selecciona si buscas Comprar (Venta) o Rentar (Renta).";
@@ -362,11 +383,6 @@
       }
       if (pMin && pMax && Number(pMin) > Number(pMax)) {
         err.textContent = "El presupuesto mínimo no puede ser mayor que el presupuesto máximo.";
-        err.classList.remove("hidden");
-        return;
-      }
-      if (totalLlenos < 4) {
-        err.textContent = `Has llenado ${totalLlenos} datos. Completa al menos 4 criterios (por ejemplo: Operación, Zona/Colonia, Precio mínimo y Precio máximo) para afinar tu búsqueda.`;
         err.classList.remove("hidden");
         return;
       }
@@ -421,8 +437,8 @@
         zona: document.getElementById("zona").value.trim(),
         colonia: document.getElementById("colonia").value.trim(),
         incluir_alrededores: document.getElementById("incluir_alrededores").checked,
-        precio_min: document.getElementById("precio_min").value.trim(),
-        precio_max: document.getElementById("precio_max").value.trim(),
+        precio_min: obtenerNumeroLimpio("precio_min"),
+        precio_max: obtenerNumeroLimpio("precio_max"),
         recamaras: document.getElementById("recamaras").value.trim(),
         pisos: document.getElementById("pisos").value.trim(),
         origen: origenCampana
@@ -479,12 +495,9 @@
       subtitulo.innerHTML = 'Marca la casilla de las propiedades de las que te gustaría recibir <b>fotos y detalles por WhatsApp</b> y presiona <b>Enviar selección</b>:';
       bloqueAcciones.classList.remove("hidden");
 
-      // Formato:
-      // Villa Residencial Bonita — $2,150,000
-      // 3 recámaras · 2 baños · 1 piso · 126 m² de construcción
       lista.innerHTML = opciones.map(op => {
         const badgeAlred = op.es_alrededor
-          ? `<span class="ml-2 text-[11px] font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 align-middle">Alrededores</span>`
+          ? `<span class="inline-block ml-1.5 text-[11px] font-medium px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 align-middle">Colonia cercana a la que buscaste</span>`
           : "";
         const lineaDetalles = op.detalles
           ? `<p class="text-xs sm:text-sm text-slate-600 mt-1">${op.detalles}</p>`
@@ -494,11 +507,12 @@
           <label class="flex items-start gap-3 p-3.5 rounded-xl border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/30 cursor-pointer transition">
             <input type="checkbox" name="prop_check" value="${op.id}" class="mt-1 w-5 h-5 accent-emerald-700 rounded cursor-pointer shrink-0" />
             <div class="min-w-0 flex-1">
-              <div class="text-sm sm:text-base leading-snug">
-                <span class="font-bold text-slate-900">${op.colonia}</span>
-                <span class="text-slate-400 mx-1">&mdash;</span>
-                <span class="font-extrabold text-emerald-800">${op.precio}</span>${badgeAlred}
-              </div>
+              <p class="font-bold text-slate-900 text-sm sm:text-base leading-snug">
+                ${op.colonia}${badgeAlred}
+              </p>
+              <p class="font-extrabold text-emerald-800 text-base sm:text-lg leading-tight mt-0.5">
+                ${op.precio}
+              </p>
               ${lineaDetalles}
             </div>
           </label>
