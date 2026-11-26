@@ -104,7 +104,7 @@
           </select>
         </div>
 
-        <!-- Colonia(s) -->
+        <!-- Colonia(s) + Switch Alrededores solo visible cuando hay colonia -->
         <div>
           <label class="block text-sm font-semibold text-slate-700 mb-1">Colonia o Fraccionamiento(s) *</label>
           <input
@@ -115,19 +115,18 @@
             class="filtro-campo w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 outline-none"
           />
           <datalist id="lista-colonias"></datalist>
-        </div>
-      </div>
 
-      <!-- Switch Incluir Alrededores (~1 km) -->
-      <div class="bg-emerald-50/70 border border-emerald-200 rounded-xl p-3.5 flex items-center justify-between gap-3">
-        <div>
-          <p class="text-sm font-semibold text-emerald-950">Incluir colonias alrededor (~1 km)</p>
-          <p class="text-xs text-emerald-800">Amplía tu búsqueda a fraccionamientos vecinos cercanos a la colonia que escribiste.</p>
+          <div id="bloque-alrededores" class="hidden mt-2.5 bg-emerald-50/70 border border-emerald-200 rounded-xl p-3 flex items-center justify-between gap-3 fade-in">
+            <div>
+              <p class="text-xs sm:text-sm font-semibold text-emerald-950">Incluir colonias alrededor (~1 km)</p>
+              <p class="text-[11px] sm:text-xs text-emerald-800">Muestra también fraccionamientos cercanos a la colonia indicada.</p>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer shrink-0">
+              <input type="checkbox" id="incluir_alrededores" class="sr-only peer" />
+              <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+            </label>
+          </div>
         </div>
-        <label class="relative inline-flex items-center cursor-pointer shrink-0">
-          <input type="checkbox" id="incluir_alrededores" class="sr-only peer" />
-          <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
-        </label>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -308,12 +307,31 @@
       return String(document.getElementById(id).value || "").replace(/\D/g, "");
     }
 
+    function actualizarVisibilidadAlrededores() {
+      const tieneColonia = document.getElementById("colonia").value.trim() !== "";
+      const bloque = document.getElementById("bloque-alrededores");
+      const check = document.getElementById("incluir_alrededores");
+
+      if (tieneColonia) {
+        bloque.classList.remove("hidden");
+      } else {
+        bloque.classList.add("hidden");
+        check.checked = false;
+      }
+    }
+
     window.addEventListener("DOMContentLoaded", () => {
       document.querySelectorAll(".campo-moneda").forEach(inp => {
         inp.addEventListener("input", () => formatearMilesInput(inp));
       });
 
+      const inputColonia = document.getElementById("colonia");
+      inputColonia.addEventListener("input", actualizarVisibilidadAlrededores);
+      inputColonia.addEventListener("change", actualizarVisibilidadAlrededores);
+
+      actualizarVisibilidadAlrededores();
       actualizarContadorFiltros();
+
       document.querySelectorAll(".filtro-campo").forEach(el => {
         el.addEventListener("input", actualizarContadorFiltros);
         el.addEventListener("change", actualizarContadorFiltros);
@@ -427,6 +445,9 @@
       btn.disabled = true;
       btn.textContent = "Buscando en inventario...";
 
+      const coloniaVal = document.getElementById("colonia").value.trim();
+      const incluirAlrededoresVal = coloniaVal !== "" && document.getElementById("incluir_alrededores").checked;
+
       payloadBusquedaActual = {
         action: "buscar",
         nombre,
@@ -435,8 +456,8 @@
         operacion: document.getElementById("operacion").value.trim(),
         tipo: document.getElementById("tipo").value.trim(),
         zona: document.getElementById("zona").value.trim(),
-        colonia: document.getElementById("colonia").value.trim(),
-        incluir_alrededores: document.getElementById("incluir_alrededores").checked,
+        colonia: coloniaVal,
+        incluir_alrededores: incluirAlrededoresVal,
         precio_min: obtenerNumeroLimpio("precio_min"),
         precio_max: obtenerNumeroLimpio("precio_max"),
         recamaras: document.getElementById("recamaras").value.trim(),
