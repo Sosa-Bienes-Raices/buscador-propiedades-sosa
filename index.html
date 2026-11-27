@@ -131,7 +131,6 @@
               placeholder="Escribe o selecciona colonia..."
               class="filtro-campo w-full rounded-xl border border-slate-300 pl-3.5 pr-16 py-2.5 text-sm bg-white focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 outline-none"
             />
-            <!-- Botón limpiar (X) -->
             <button
               type="button"
               id="btn-limpiar-colonia"
@@ -141,7 +140,6 @@
             >
               ✕
             </button>
-            <!-- Botón flechita desplegable -->
             <button
               type="button"
               id="btn-toggle-colonias"
@@ -155,13 +153,11 @@
             </button>
           </div>
 
-          <!-- Lista desplegable filtrable -->
           <div
             id="dropdown-colonias"
             class="hidden absolute left-0 right-0 mt-1 bg-white border border-slate-300 rounded-xl shadow-lg max-h-60 overflow-y-auto z-30 divide-y divide-slate-100"
           ></div>
 
-          <!-- Switch Alrededores solo visible cuando se elige una colonia válida -->
           <div id="bloque-alrededores" class="hidden mt-2.5 bg-emerald-50/70 border border-emerald-200 rounded-xl p-3 flex items-center justify-between gap-3 fade-in">
             <div>
               <p class="text-xs sm:text-sm font-semibold text-emerald-950">Incluir colonias alrededor (~1 km)</p>
@@ -176,7 +172,6 @@
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <!-- Precio Mínimo con comas automáticas -->
         <div>
           <label class="block text-sm font-semibold text-slate-700 mb-1">Presupuesto mínimo (MXN) *</label>
           <input
@@ -188,7 +183,6 @@
           />
         </div>
 
-        <!-- Precio Máximo con comas automáticas -->
         <div>
           <label class="block text-sm font-semibold text-slate-700 mb-1">Presupuesto máximo (MXN) *</label>
           <input
@@ -200,7 +194,6 @@
           />
         </div>
 
-        <!-- Recámaras -->
         <div>
           <label class="block text-sm font-semibold text-slate-700 mb-1">Recámaras (opcional)</label>
           <select id="recamaras" class="filtro-campo w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm bg-white focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 outline-none">
@@ -212,7 +205,6 @@
           </select>
         </div>
 
-        <!-- Pisos -->
         <div>
           <label class="block text-sm font-semibold text-slate-700 mb-1">Plantas / Pisos (opcional)</label>
           <select id="pisos" class="filtro-campo w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm bg-white focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 outline-none">
@@ -363,9 +355,6 @@
       return String(document.getElementById(id).value || "").replace(/\D/g, "");
     }
 
-    // ==========================================
-    // BUSCADOR / DESPLEGABLE DE COLONIAS
-    // ==========================================
     function obtenerColoniaValida() {
       const texto = document.getElementById("colonia").value.trim();
       if (!texto) return "";
@@ -660,7 +649,6 @@
           throw new Error(data.message || "Error al consultar el inventario.");
         }
 
-        // Disparar conversión Lead en Meta Pixel únicamente tras guardado exitoso
         if (typeof fbq === "function") {
           fbq("track", "Lead");
         }
@@ -709,6 +697,9 @@
         const badgeAlred = op.es_alrededor
           ? `<span class="inline-block ml-1.5 text-[11px] font-medium px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 align-middle">Colonia cercana a la que buscaste</span>`
           : "";
+        const badgeAvaluo = op.bajo_avaluo
+          ? `<span class="inline-block ml-1.5 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 align-middle">Precio por debajo del avalúo</span>`
+          : "";
         const lineaDetalles = op.detalles
           ? `<p class="text-xs sm:text-sm text-slate-600 mt-1">${op.detalles}</p>`
           : "";
@@ -721,7 +712,7 @@
                 ${op.colonia}${badgeAlred}
               </p>
               <p class="font-extrabold text-emerald-800 text-base sm:text-lg leading-tight mt-0.5">
-                ${op.precio}
+                ${op.precio}${badgeAvaluo}
               </p>
               ${lineaDetalles}
             </div>
